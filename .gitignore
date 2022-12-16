@@ -3,3 +3,4 @@ CMakeCache.txt
 CMakeFiles
 Makefile
 *.gch
+cmake_install.cmake
