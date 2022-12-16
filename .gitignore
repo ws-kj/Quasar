@@ -1,0 +1,5 @@
+*.json
+CMakeCache.txt
+CMakeFiles
+Makefile
+*.gch
