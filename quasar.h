@@ -43,7 +43,8 @@ namespace quasar
         std::vector<std::pair<const char*, std::any>> outputs;
 
         std::string last_response;
-        size_t resp_builder(void *ptr, size_t size, size_t nmemb, void *);
+        size_t resp_builder(void *ptr, size_t size, size_t nmemb);
+        static size_t rb_wrapper(void *ptr, size_t sz, size_t nmemb, void *f);
 
     public:
         Quasar(const char* prompt);

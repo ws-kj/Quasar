@@ -70,19 +70,24 @@ Quasar& Quasar::execute() {
     const char* postfields = s_rbody.c_str();
     curl_easy_setopt(this->curl_handle, CURLOPT_POSTFIELDS, postfields);
 
-    curl_easy_setopt(this->curl_handle, CURLOPT_WRITEFUNCTION, std::bind(&Quasar::resp_builder, this));
+    curl_easy_setopt(this->curl_handle, CURLOPT_WRITEDATA, this);
+    curl_easy_setopt(this->curl_handle, CURLOPT_WRITEFUNCTION, &Quasar::rb_wrapper);
 
     this->curl_result = curl_easy_perform(this->curl_handle); 
 
     if(this->curl_result != CURLE_OK)
         std::cout << curl_easy_strerror(this->curl_result) << std::endl;
-        
-    std::cout << this->last_response;
+
+    json response;
 
     return *this;
 }
 
-size_t Quasar::resp_builder(void *ptr, size_t size, size_t nmemb, void *) {
+size_t Quasar::resp_builder(void *ptr, size_t size, size_t nmemb) {
     this->last_response += (const char*)ptr;
     return size * nmemb;
+}
+
+size_t Quasar::rb_wrapper(void *ptr, size_t size, size_t nmemb, void *q) {
+    return static_cast<Quasar*>(q)->resp_builder(ptr, size, nmemb);
 }
