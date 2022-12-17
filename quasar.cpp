@@ -78,8 +78,9 @@ Quasar& Quasar::execute() {
     if(this->curl_result != CURLE_OK)
         std::cout << curl_easy_strerror(this->curl_result) << std::endl;
 
-    json response;
-
+    json response = json::parse(this->last_response);
+    std::string gpt_out = response["choices"][0]["text"];
+    std::cout << gpt_out;
     return *this;
 }
 
