@@ -28,7 +28,7 @@ Quasar::Quasar(const char* prompt) {
     this->prompt = prompt;
 }
 
-Quasar& Quasar::with_model(const char* model_id, float temp, int tokens) {
+Quasar& Quasar::with_model(const char* model_id, float temp, size_t tokens) {
     this->model = model_id;
     this->temperature = temp;
     this->max_tokens = tokens;
@@ -47,7 +47,7 @@ Quasar& Quasar::execute() {
 
     rprompt << this->prompt << std::endl;
     rprompt << PROMPT_BEGIN;
-    for(int i=0; i<this->outputs.size(); i++) {
+    for(size_t i=0; i<this->outputs.size(); i++) {
         if(i > 0) rprompt << ", ";
         rprompt << this->outputs[i].first;
     } 
@@ -80,7 +80,25 @@ Quasar& Quasar::execute() {
 
     json response = json::parse(this->last_response);
     std::string gpt_out = response["choices"][0]["text"];
-    std::cout << gpt_out;
+
+    if(!json::accept(gpt_out)) return *this;
+
+    json final_out = json::parse(gpt_out);
+
+    for(const auto& out : this->outputs) {
+        try {
+            json value = final_out.at(out.first);
+            auto n = value.get<int>();
+            std::cout << n << std::endl;
+            std::cout << out.second.type().name(); 
+            std::cout << std::is_same_v<decltype(&value), int>;
+            //*out.first = dynamic_cast<decltype(out.second.type())>(value);
+
+        } catch(std::out_of_range& e) {
+            std::cout << "out of range: " << e.what() << std::endl;
+        }
+    }
+
     return *this;
 }
 

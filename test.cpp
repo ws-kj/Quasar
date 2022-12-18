@@ -22,5 +22,6 @@ int main(int argc, char **argv) {
             .bind_output<int>("c", &c)
             .execute();
 
+    Quasar::cleanup();
     return 0;
 }
