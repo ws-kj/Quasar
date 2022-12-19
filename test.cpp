@@ -11,20 +11,19 @@ int main(int argc, char **argv) {
         getline(fs, key);
         
     if(Quasar::init(key)) return 1;
-    int a = 5;
-    int b = 10;
-    int c;
-    std::string d;
+    
+    std::string b = "I love sunshine and happiness.";
+    std::string a = "I hate puppies and kittens.";
+    bool c;
 
-    Quasar surrogate = Quasar("multiply a and b together into c")
-            .with_model("text-davinci-003") 
-            .bind_input<int>("a", &a) 
-            .bind_input<int>("b", &b) 
-//            .bind_output<int>("c", &c)
-            .execute() 
-            .extract<int>("c", &c);
+    Quasar("if sentence a sounds more positive than sentence b, output c as true.")
+        .with_model("text-davinci-003")
+        .bind_input<std::string>("a", &a)
+        .bind_input<std::string>("b", &b)
+        .execute()
+        .extract<bool>("c", &c);
 
-            std::cout << c;
+    std::cout << c;
 
     Quasar::cleanup();
     return 0;

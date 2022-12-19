@@ -16,7 +16,6 @@ using json = nlohmann::json;
 namespace quasar 
 {
 
-    constexpr const char* PROMPT_BEGIN = "Output variables are ";
     constexpr const char* PROMPT_END = "Return all output variables and their values in a valid json object like this: {\"name\":<value>, \"name2\":<value>}. Numerical values should never be in quotations. The json object must be valid.";
 
     constexpr const char* GPT_URL = "https://api.openai.com/v1/completions";
@@ -29,22 +28,6 @@ namespace quasar
         std::void_t<decltype(std::declval<S&>()<<std::declval<T>())> >
     : std::true_type {};
 
-    /*
-    class CurlFailureException : public std::runtime_error {
-    public:
-        CurlFailure(const char* msg):runtime_error(msg){}
-    };
-
-    class ParseException : public std::runtime_error {
-    public:
-        ParseFailure():runtime_error("Failed to parse API response"){}
-    };
-
-    class GenerationException : public std::runtime_error {
-    public:
-        GenerationException():runtime_error("GPT failed to generate valid data"){}
-    };
-    */
     class Quasar {
         static CURL* curl_handle;
         CURLcode curl_result;
@@ -58,7 +41,6 @@ namespace quasar
         size_t max_tokens;
 
         std::vector<std::pair<const char*, std::string>> inputs;
-        std::vector<std::pair<const char*, std::any>> outputs;
 
         std::string last_response;
         size_t resp_builder(void *ptr, size_t size, size_t nmemb);
@@ -85,13 +67,6 @@ namespace quasar
         }
 
         template<typename T>
-        Quasar& bind_output(const char* name, T* output) {
-            std::any ref = output;
-            outputs.push_back(std::make_pair(name, ref));
-            return *this;
-        }
-
-        template<typename T>
         Quasar& extract(const char* name, T* ref) {
             try {
                 T genval = this->generated.at(name).get<T>();
@@ -106,23 +81,3 @@ namespace quasar
         Quasar& execute();
     };
 }
-
-
-/*
- *
- *  quasar::Quasar("Multiply a and b together, and return into c.")
- *          .with_model(quasar::davinci)
- *          .bind_input<int>(&a, "a")
- *          .bind_input<int>(&b, "b")
- *          .bind_output<int>(&c, "c")
- *          .execute();
- *
- */
-
-/*
- * {'a': '5', 'b':'10'}
- * Multiply a and b together into c.
- * Output variables are c.
- * Return all output variables and their values in a json object like this: {'name': '<value>'}
- * 
- */

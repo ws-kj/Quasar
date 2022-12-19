@@ -46,11 +46,6 @@ Quasar& Quasar::execute() {
     rprompt << invars.dump() << std::endl;
 
     rprompt << this->prompt << std::endl;
-    rprompt << PROMPT_BEGIN;
-    for(size_t i=0; i<this->outputs.size(); i++) {
-        if(i > 0) rprompt << ", ";
-        rprompt << this->outputs[i].first;
-    } 
     rprompt << ".\n" << PROMPT_END << std::endl;
 
     json rbody = {
@@ -85,19 +80,7 @@ Quasar& Quasar::execute() {
 
     json final_out = json::parse(gpt_out);
     this->generated = final_out;
-/*
-    for(auto& out : this->outputs) {
-        try {
-            json value = final_out.at(out.first);
-            auto n = final_out[out.first];
-            std::cout << typeid(n).name();
-            ref = out.second;
 
-        } catch(std::out_of_range& e) {
-            std::cout << "out of range: " << e.what() << std::endl;
-        }
-    }
-*/
     return *this;
 }
 
