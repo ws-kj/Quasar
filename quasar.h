@@ -11,6 +11,8 @@
 #include <curl/curl.h>
 #include <nlohmann/json.hpp>
 
+using json = nlohmann::json;
+
 namespace quasar 
 {
 
@@ -62,7 +64,7 @@ namespace quasar
         size_t resp_builder(void *ptr, size_t size, size_t nmemb);
         static size_t rb_wrapper(void *ptr, size_t sz, size_t nmemb, void *q);
 
-        
+        json generated;
 
     public:
         Quasar(const char* prompt);
@@ -82,11 +84,22 @@ namespace quasar
             return *this;
         }
 
-
         template<typename T>
         Quasar& bind_output(const char* name, T* output) {
             std::any ref = output;
             outputs.push_back(std::make_pair(name, ref));
+            return *this;
+        }
+
+        template<typename T>
+        Quasar& extract(const char* name, T* ref) {
+            try {
+                T genval = this->generated.at(name).get<T>();
+                *ref = genval;
+            } catch(std::exception& e) {
+                std::cout << "out of range: " << e.what() << std::endl;
+            }
+
             return *this;
         }
 

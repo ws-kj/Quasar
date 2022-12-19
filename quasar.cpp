@@ -84,21 +84,20 @@ Quasar& Quasar::execute() {
     if(!json::accept(gpt_out)) return *this;
 
     json final_out = json::parse(gpt_out);
-
-    for(const auto& out : this->outputs) {
+    this->generated = final_out;
+/*
+    for(auto& out : this->outputs) {
         try {
             json value = final_out.at(out.first);
-            auto n = value.get<int>();
-            std::cout << n << std::endl;
-            std::cout << out.second.type().name(); 
-            std::cout << std::is_same_v<decltype(&value), int>;
-            //*out.first = dynamic_cast<decltype(out.second.type())>(value);
+            auto n = final_out[out.first];
+            std::cout << typeid(n).name();
+            ref = out.second;
 
         } catch(std::out_of_range& e) {
             std::cout << "out of range: " << e.what() << std::endl;
         }
     }
-
+*/
     return *this;
 }
 
