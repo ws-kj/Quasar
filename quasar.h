@@ -2,11 +2,10 @@
 
 #include <string>
 #include <vector>
-#include <map>
-#include <any>
 #include <iostream>
 #include <sstream>
 #include <assert.h>
+#include <stdexcept>
 
 #include <curl/curl.h>
 #include <nlohmann/json.hpp>
@@ -27,6 +26,13 @@ namespace quasar
     struct is_streamable<S, T, 
         std::void_t<decltype(std::declval<S&>()<<std::declval<T>())> >
     : std::true_type {};
+
+    enum class Model {
+        GPT_Davinci,
+        GPT_Curie,
+        GPT_Babbage,
+        GPT_Ada
+    };
 
     class Quasar {
         static CURL* curl_handle;
@@ -54,8 +60,8 @@ namespace quasar
         static int init(std::string key, std::string org="");
         static void cleanup();
 
-        Quasar& with_model(const char* model_id, 
-                float temp=1.f, size_t tokens=16);
+        Quasar& with_model(Model model_id, float temp=1.f, size_t tokens=128);
+        Quasar& with_model(const char* model_id, float temp=1.f, size_t tokens=128);
 
         template<typename T>
         Quasar& bind_input(const char* name, T* input) {
@@ -72,7 +78,7 @@ namespace quasar
                 T genval = this->generated.at(name).get<T>();
                 *ref = genval;
             } catch(std::exception& e) {
-                std::cout << "out of range: " << e.what() << std::endl;
+                throw e;
             }
 
             return *this;

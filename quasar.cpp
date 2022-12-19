@@ -28,6 +28,29 @@ Quasar::Quasar(const char* prompt) {
     this->prompt = prompt;
 }
 
+Quasar& Quasar::with_model(Model model_id, float temp, size_t tokens) {
+    switch(model_id) {
+    case Model::GPT_Davinci:
+        this->model = "text-davinci-003";
+        break;
+    case Model::GPT_Curie:
+        this->model = "text-curie-001";
+        break;
+    case Model::GPT_Babbage:
+        this->model = "text-babbage-001";
+        break;
+    case Model::GPT_Ada:
+        this->model = "text-ada-001";
+        break;
+    default:
+        this->model = "text-davinci-003";
+    }
+    this->temperature = temp;
+    this->max_tokens = tokens;
+
+    return *this;
+}
+
 Quasar& Quasar::with_model(const char* model_id, float temp, size_t tokens) {
     this->model = model_id;
     this->temperature = temp;
@@ -59,6 +82,9 @@ Quasar& Quasar::execute() {
     headers = curl_slist_append(headers, "Content-Type: application/json");
     headers = curl_slist_append(headers, 
             ("Authorization: Bearer " + this->api_key).c_str());
+    if(!this->org_key.empty())
+        headers = curl_slist_append(headers,
+            ("OpenAI-Organization: " + this->org_key).c_str());
     curl_easy_setopt(this->curl_handle, CURLOPT_HTTPHEADER, headers);
 
     auto s_rbody = rbody.dump();
@@ -70,13 +96,18 @@ Quasar& Quasar::execute() {
 
     this->curl_result = curl_easy_perform(this->curl_handle); 
 
-    if(this->curl_result != CURLE_OK)
-        std::cout << curl_easy_strerror(this->curl_result) << std::endl;
+    if(this->curl_result != CURLE_OK) {
+        throw std::runtime_error(curl_easy_strerror(this->curl_result));
+        return *this;
+    }
 
     json response = json::parse(this->last_response);
     std::string gpt_out = response["choices"][0]["text"];
 
-    if(!json::accept(gpt_out)) return *this;
+    if(!json::accept(gpt_out)) {
+        throw std::runtime_error("generated json invalid");
+        return *this;
+    }
 
     json final_out = json::parse(gpt_out);
     this->generated = final_out;

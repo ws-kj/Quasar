@@ -17,7 +17,7 @@ int main(int argc, char **argv) {
     bool c;
 
     Quasar("if sentence a sounds more positive than sentence b, output c as true.")
-        .with_model("text-davinci-003")
+        .with_model(Model::GPT_Davinci)
         .bind_input<std::string>("a", &a)
         .bind_input<std::string>("b", &b)
         .execute()
