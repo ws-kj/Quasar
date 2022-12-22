@@ -12,8 +12,8 @@ using namespace quasar;
 
 ...
 
-// Load OpenAI auth key from file
-std::ifstream fs("key.json");
+// Load OpenAI API key from file.
+std::ifstream fs("<api_key_file>.json");
 std::string key;
 if(fs.good())
     getline(fs, key);
@@ -34,6 +34,9 @@ std::cout << good; // "What day of the week is it?"
 
 Quasar::cleanup();
 ```
+
+## Notes
+GPT3 is not necessarily deterministic. Visit the OpenAI docs to learn more about temperature and tokens.
 
 
 
