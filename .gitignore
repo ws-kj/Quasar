@@ -8,3 +8,4 @@ quasar_test
 test/
 *.so
 *.dylib
+*.txt
