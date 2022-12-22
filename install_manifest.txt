@@ -1,0 +1,2 @@
+/Users/997968/homebrew/lib/libquasar.dylib
+/Users/997968/homebrew/lib/../include/quasar.h

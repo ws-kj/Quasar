@@ -5,3 +5,4 @@ Makefile
 *.gch
 cmake_install.cmake
 quasar_test
+test/
