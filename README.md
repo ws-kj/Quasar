@@ -2,9 +2,9 @@
 GPT3-enabled surrogate functions in modern C++
 
 ## Installation
-Dependencies: `libcurl`, `nlohmann_json 3.2.0`
-Install process: `cmake .; make; make install`
-Library will appear as `libquasar.so` or `libquasar.dylib` in the path specified by `CMAKE_INSTALL_PREFIX` when built.
+- Dependencies: `libcurl`, `nlohmann_json 3.2.0`
+- Install process: `cmake .; make; make install`
+- Library will appear as `libquasar.so` or `libquasar.dylib` in the path specified by `CMAKE_INSTALL_PREFIX` when built.
 
 ## Example usage
 ```C++
