@@ -6,3 +6,5 @@ Makefile
 cmake_install.cmake
 quasar_test
 test/
+*.so
+*.dylib
