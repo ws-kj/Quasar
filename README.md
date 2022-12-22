@@ -36,7 +36,7 @@ Quasar::cleanup();
 ```
 
 ## Notes
-GPT3 is not necessarily deterministic. Visit the OpenAI docs to learn more about temperature and tokens.
-
+* GPT3 is not necessarily deterministic. Visit the OpenAI docs to learn more about temperature and tokens.
+* Quasar inputs and outputs should ideally be wrapped in `try`/`catch` blocks.
 
 
