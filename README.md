@@ -1,18 +1,38 @@
 # Quasar
 GPT3-enabled surrogate functions in modern C++
+
+## Installation
+Dependencies: `libcurl`, `nlohmann_json 3.2.0`
+Install process: `cmake .; make; make install`
+Library will appear as `libquasar.so` or `libquasar.dylib` in the path specified by `CMAKE_INSTALL_PREFIX` when built.
+
+## Example usage
 ```C++
-std::string a = "I hate puppies and kittens."
-std::string b = "I love sunshine and happiness."
-bool result;
+using namespace quasar; 
 
-Quasar("If sentence a sounds more positive than sentence b, output result as true.")
-	.with_model("text-davinci-003")
-	.bind_input<std::string>("a", &a)
-	.bind_input<std::string>("b", &b)
-	.execute()
-	.extract<bool>("result", &result);
+...
 
-std::cout << result; // false
+// Load OpenAI auth key from file
+std::ifstream fs("key.json");
+std::string key;
+if(fs.good())
+    getline(fs, key);
+
+// Must initialize before using
+if(Quasar::init(key)) return 1;
+
+std::string bad = "What day of the wek is it?";
+std::string good;
+
+Quasar("Fix the spelling mistake in bad and output it into good.")
+    .with_model(Model::GPT_Davinci) // Optional params: gpt temperature, max tokens
+    .bind_input<std::string>("bad", &bad) // Input can be any streamable type
+    .execute()
+    .extract<std::string>("good", &good); // Extraction throws exception on failure
+
+std::cout << good; // "What day of the week is it?"
+
+Quasar::cleanup();
 ```
 
 
