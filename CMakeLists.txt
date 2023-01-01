@@ -1,30 +1,19 @@
-cmake_minimum_required(VERSION 3.8)
+cmake_minimum_required(VERSION 3.2)
+
+project(quasar-proj)
 
 set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -O3")
 
-project("quasar" LANGUAGES CXX)
+set(CMAKE_INSTALL_PREFIX ${PROJECT_SOURCE_DIR})
 
-find_package(CURL REQUIRED)
-find_package(nlohmann_json 3.2.0 REQUIRED)
+set(QUASAR_INSTALL_INCLUDE_DIR ${PROJECT_SOURCE_DIR}/include)
+set(QUASAR_INSTALL_BIN_DIR ${PROJECT_SOURCE_DIR}/bin)
+set(QUASAR_INSTALL_LIB_DIR ${PROJECT_SOURCE_DIR}/lib)
 
-#set(SOURCE_EXE quasar.cpp quasar.h)
-include_directories(${CURL_INCLUDE_DIR})
+set(QUASAR_HEADERS_DIR ${PROJECT_SOURCE_DIR}/src/quasar)
 
-include(GNUInstallDirs)
+include_directories(${QUASAR_INSTALL_INCLUDE_DIR})
+include_directories(${QUASAR_HEADERS_DIR})
 
-add_library(quasar
-    src/quasar.cpp
-    include/quasar.h
-)
-
-target_link_libraries(quasar ${CURL_LIBRARIES} nlohmann_json::nlohmann_json)
-
-set_target_properties(quasar PROPERTIES PUBLIC_HEADER 
-    "include/quasar.h")
-
-install(
-    TARGETS quasar
-    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
-    PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
-)
-
+add_subdirectory(src)
