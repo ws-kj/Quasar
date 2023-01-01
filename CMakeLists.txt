@@ -7,14 +7,24 @@ project("quasar" LANGUAGES CXX)
 find_package(CURL REQUIRED)
 find_package(nlohmann_json 3.2.0 REQUIRED)
 
-set(SOURCE_EXE quasar.cpp quasar.h)
+#set(SOURCE_EXE quasar.cpp quasar.h)
 include_directories(${CURL_INCLUDE_DIR})
 
-add_library(quasar SHARED src/quasar.cpp)
+include(GNUInstallDirs)
 
-target_include_directories(quasar PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}")
+add_library(quasar
+    src/quasar.cpp
+    include/quasar.h
+)
 
 target_link_libraries(quasar ${CURL_LIBRARIES} nlohmann_json::nlohmann_json)
 
-install(TARGETS quasar DESTINATION ${CMAKE_INSTALL_PREFIX})
-install(FILES include/quasar.h DESTINATION ${CMAKE_INSTALL_PREFIX}/../include)
+set_target_properties(quasar PROPERTIES PUBLIC_HEADER 
+    "include/quasar.h")
+
+install(
+    TARGETS quasar
+    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+    PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
+)
+

@@ -1,4 +1,4 @@
-#include "include/quasar.h"
+#include <quasar.h>
 
 using json = nlohmann::json;
 using namespace quasar;
