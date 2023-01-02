@@ -104,6 +104,7 @@ Quasar& Quasar::execute() {
     json response = json::parse(this->last_response);
     std::string gpt_out = response["choices"][0]["text"];
 
+
     if(!json::accept(gpt_out)) {
         throw std::runtime_error("generated json invalid");
         return *this;
