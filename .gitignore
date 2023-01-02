@@ -10,3 +10,6 @@ test/
 *.dylib
 *.txt
 libquasar.*
+build/
+bin/*
+lib/*
