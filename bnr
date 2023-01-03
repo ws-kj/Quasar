@@ -1,4 +1,5 @@
 rm -rf build
+rm -rf include/*
 mkdir build; cd build
 cmake ..
 make && make install

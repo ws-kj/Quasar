@@ -78,7 +78,6 @@ namespace quasar
                 T genval = this->generated.at(name).get<T>();
                 *ref = genval;
             } catch(std::exception& e) {
-                std::cerr < "failed extract";
                 throw e;
             }
 
