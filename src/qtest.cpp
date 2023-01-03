@@ -5,11 +5,14 @@ using namespace quasar;
 
 int main(int argc, char **argv) {
 
-    std::ifstream fs("key.json");
+    std::ifstream fs("../src/key.json");
     std::string key;
-    if(fs.good())
-        getline(fs, key);
-        
+
+    if(fs.good()) { getline(fs, key); } else {
+        std::cerr << "could not load key\n";
+        return 1;
+    }
+
     if(Quasar::init(key)) return 1;
     
     std::string b = "I love sunshine and happiness.";
