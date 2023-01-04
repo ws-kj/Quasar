@@ -17,7 +17,7 @@ namespace quasar
 
     constexpr const char* PROMPT_END = "Return all output variables and their values in a valid json object like this: {\"name\":<value>, \"name2\":<value>}. Numerical values should never be in quotations. The json object must be valid.";
 
-    constexpr const char* GPT_URL = "https://api.openai.com/v1/completions";
+    constexpr const char* GPTCOMP_URL = "https://api.openai.com/v1/completions";
 
     template<typename S, typename T, typename = void>
     struct is_streamable: std::false_type {};
@@ -49,6 +49,8 @@ namespace quasar
         std::vector<std::pair<const char*, std::string>> inputs;
 
         std::string last_response;
+
+        int openai_req(const char *url, const char *body);
         size_t resp_builder(void *ptr, size_t size, size_t nmemb);
         static size_t rb_wrapper(void *ptr, size_t sz, size_t nmemb, void *q);
 

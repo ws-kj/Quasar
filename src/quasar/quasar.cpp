@@ -61,7 +61,6 @@ Quasar& Quasar::with_model(const char* model_id, float temp, size_t tokens) {
 
 Quasar& Quasar::execute() {
     std::stringstream rprompt;
-    struct curl_slist *headers=NULL;
 
     json invars;
     for(const auto& in : this->inputs)
@@ -78,27 +77,13 @@ Quasar& Quasar::execute() {
         {"temperature", this->temperature}
     };
 
-    curl_easy_setopt(this->curl_handle, CURLOPT_URL, GPT_URL);
-    headers = curl_slist_append(headers, "Content-Type: application/json");
-    headers = curl_slist_append(headers, 
-            ("Authorization: Bearer " + this->api_key).c_str());
-    if(!this->org_key.empty())
-        headers = curl_slist_append(headers,
-            ("OpenAI-Organization: " + this->org_key).c_str());
-    curl_easy_setopt(this->curl_handle, CURLOPT_HTTPHEADER, headers);
 
     auto s_rbody = rbody.dump();
     const char* postfields = s_rbody.c_str();
-    curl_easy_setopt(this->curl_handle, CURLOPT_POSTFIELDS, postfields);
-
-    curl_easy_setopt(this->curl_handle, CURLOPT_WRITEDATA, this);
-    curl_easy_setopt(this->curl_handle, CURLOPT_WRITEFUNCTION, &Quasar::rb_wrapper);
-
-    this->curl_result = curl_easy_perform(this->curl_handle); 
-
-    if(this->curl_result != CURLE_OK) {
-        throw std::runtime_error(curl_easy_strerror(this->curl_result));
-        return *this;
+    try {
+        this->openai_req(GPTCOMP_URL, postfields);
+    } catch(std::runtime_error& e) {
+        throw e; return *this; 
     }
 
     json response = json::parse(this->last_response);
@@ -114,6 +99,34 @@ Quasar& Quasar::execute() {
     this->generated = final_out;
 
     return *this;
+}
+
+int Quasar::openai_req(const char *url, const char *body) {
+    struct curl_slist *headers=NULL;
+
+    curl_easy_setopt(this->curl_handle, CURLOPT_URL, url);
+    headers = curl_slist_append(headers, "Content-Type: application/json");
+
+    headers = curl_slist_append(headers, 
+            ("Authorization: Bearer " + this->api_key).c_str());
+    if(!this->org_key.empty())
+        headers = curl_slist_append(headers,
+            ("OpenAI-Organization: " + this->org_key).c_str());
+
+    curl_easy_setopt(this->curl_handle, CURLOPT_HTTPHEADER, headers);
+    curl_easy_setopt(this->curl_handle, CURLOPT_POSTFIELDS, body);
+
+    curl_easy_setopt(this->curl_handle, CURLOPT_WRITEDATA, this);
+    curl_easy_setopt(this->curl_handle, CURLOPT_WRITEFUNCTION, &Quasar::rb_wrapper);
+
+    this->curl_result = curl_easy_perform(this->curl_handle); 
+
+    if(this->curl_result != CURLE_OK) {
+        throw std::runtime_error(curl_easy_strerror(this->curl_result));
+        return 1;
+    }
+
+    return 0;
 }
 
 size_t Quasar::resp_builder(void *ptr, size_t size, size_t nmemb) {

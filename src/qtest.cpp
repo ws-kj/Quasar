@@ -14,7 +14,7 @@ int main(int argc, char **argv) {
     }
 
     if(Quasar::init(key)) return 1;
-    
+/* 
     std::string b = "I love sunshine and happiness.";
     std::string a = "I hate puppies and kittens.";
     bool c;
@@ -27,7 +27,7 @@ int main(int argc, char **argv) {
         .extract<bool>("c", &c);
 
     std::cout << c;
-
+*/
     std::string bad = "What day of the wek is it?";
     std::string good;
 
